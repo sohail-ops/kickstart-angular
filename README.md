@@ -47,3 +47,5 @@ The above command will start the server at http://localhost:4200/
 
 - You have to strictly follow the branching method. Working on master or development branch is STRICTLY FORBIDDEN!
 - EACH TASK IS TO BE DOCUMENTED ALONG WITH SCREENSHOTS. DOCUMENTATION IS EQUALLY VALUABLE AS THE IMPLEMENTATION ITSELF.
+
+## ENJOY And Change what you can and improve the Application
