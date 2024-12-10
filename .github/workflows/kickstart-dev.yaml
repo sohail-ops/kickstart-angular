@@ -1,0 +1,54 @@
+# Name of the pipeline
+name: Angular Kickstart
+
+# Trigger for the pipeline
+# This pipeline will be triggered whenever a commit is pushed to "development" branch
+on:
+  push:
+    branches:
+    - development
+
+# Jobs to run
+jobs:
+  deploy:
+    # "ubuntu-latest" is GitHub Actions' provided runner.
+    # Its' equipped with mostly all the tools needed to build applications.
+    # But since it is hosted and owned by Microsoft (GitHub).
+    # Clients and businesses prefer to use their own hosted runners for data security.
+    # Momentum had their runners hosted as pods on the EKS cluster.
+    runs-on: ubuntu-latest
+    steps:
+    # This step configures the AWS credentials stored in Repository Secrets of GitHub.
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      env:
+        REGION: ap-south-1 # Using custom environments
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.REGION }}
+
+    # This step takes a clone of the repository on the runner.
+    - name: Checkout code from GitHub
+      uses: actions/checkout@v2
+
+    # This action step installs the desired version of node js on the runner, if not present.
+    - name: Setup Node.js 14.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    # Installs the dependencies for the Angular Application
+    - name: Install dependencies
+      run: npm install
+
+    # Packages the build artifact
+    - name: Build application artifact
+      run: npm run build
+
+    # Deploys the artifact to s3 bucket for hosting the application
+    # success() method ensures that this step only runs when all previous ones
+    # are successfully executed.
+    - name: Deploy the artifact to S3
+      if: success()
+      run: aws s3 sync ./dist/kickstart-angular s3://angular-kickstart-s3
