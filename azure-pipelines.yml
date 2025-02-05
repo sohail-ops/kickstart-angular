@@ -10,11 +10,10 @@ steps:
     version: 'lts'
   displayName: 'Install Node.js'
 
-- script:
+- script: |
     node --version
     npm install
   displayName: 'npm install'
 
-- script: |
-    npm run build
+- script: npm run build
   displayName: 'npm build'
